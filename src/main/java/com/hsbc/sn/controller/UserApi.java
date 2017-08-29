@@ -1,7 +1,7 @@
 package com.hsbc.sn.controller;
 
-import com.hsbc.sn.model.Post;
-import com.hsbc.sn.model.User;
+import com.hsbc.sn.controller.entity.*;
+import com.hsbc.sn.repository.model.Post;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -19,23 +19,22 @@ import java.util.Collection;
 @RequestMapping(path = "api/users/{userId}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public interface UserApi {
 
-    @ApiOperation(value = "Gets all posts produced by specified user", response = Post.class)
+    @ApiOperation(value = "Gets all posts produced by specified user", response = RawPost[].class)
     @GetMapping(value = "/posts")
     @ApiResponses(value = {
             @ApiResponse(code = HttpServletResponse.SC_OK, message = "Posts has been retrieved successfully"),
             @ApiResponse(code = HttpServletResponse.SC_NOT_FOUND, message = "User not found"),
-            @ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "Bad request"),
             @ApiResponse(code = HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message = "Internal error")})
-    ResponseEntity<Collection<Post>> getPosts(@PathVariable Long userId);
+    ResponseEntity<Collection<RawPost>> getPosts(@PathVariable Long userId);
 
-    @ApiOperation(value = "Adds a post to social network", response = Long.class, code = HttpServletResponse.SC_CREATED)
+    @ApiOperation(value = "Adds a post to social network. If a user does not exist, it will be created", response = Long.class, code = HttpServletResponse.SC_CREATED)
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/posts")
     @ApiResponses(value = {
-            @ApiResponse(code = HttpServletResponse.SC_CREATED, message = "Post has been added successfully", response = Long.class),
+            @ApiResponse(code = HttpServletResponse.SC_CREATED, message = "Post has been added successfully", response = PostId.class),
             @ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "Bad request"),
             @ApiResponse(code = HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message = "Internal error")})
-    ResponseEntity<Long> addPost(@PathVariable Long userId, @Valid @RequestBody Post post);
+    ResponseEntity<PostId> addPost(@PathVariable Long userId, @Valid @RequestBody Message message);
 
     @ApiOperation(value = "Adds a friendship", code = HttpServletResponse.SC_CREATED)
     @PostMapping(value = "/friendships")
@@ -45,14 +44,14 @@ public interface UserApi {
             @ApiResponse(code = HttpServletResponse.SC_NOT_FOUND, message = "User not found"),
             @ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "Bad request"),
             @ApiResponse(code = HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message = "Internal error")})
-    ResponseEntity<Void> addFriendship(@PathVariable Long userId, @Valid @RequestBody User user);
+    ResponseEntity<Void> addFriendship(@PathVariable Long userId, @Valid @RequestBody UserId friendId);
 
-    @ApiOperation(value = "Gets all posts produced by user's friends")
+    @ApiOperation(value = "Gets all posts produced by user's friends", response = PersonalizedPost[].class)
     @GetMapping(value = "/timeline")
     @ApiResponses(value = {
             @ApiResponse(code = HttpServletResponse.SC_OK, message = "Posts has been retrieved successfully"),
             @ApiResponse(code = HttpServletResponse.SC_NOT_FOUND, message = "User not found"),
             @ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "Bad request"),
             @ApiResponse(code = HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message = "Internal error")})
-    ResponseEntity<Collection<Post>> timeline(@PathVariable Long userId);
+    ResponseEntity<Collection<PersonalizedPost>> timeline(@PathVariable Long userId);
 }
