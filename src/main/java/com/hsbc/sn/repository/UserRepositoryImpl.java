@@ -84,6 +84,22 @@ public class UserRepositoryImpl implements UserRepository {
         return entityManager.createQuery(query).getResultList();
     }
 
+    @Override
+    public boolean userFollowExists(Long followingId, Long followerId) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> query = builder.createQuery(Long.class);
+
+        Root<Follow> followRoot = query.from(Follow.class);
+        query.select(builder.count(followRoot));
+        query.where(builder.and(
+                builder.equal(followRoot.get("id").get("follower"), followerId),
+                builder.equal(followRoot.get("id").get("following"), followingId)
+        ));
+
+        Long size = entityManager.createQuery(query).getSingleResult();
+        return size > 0;
+    }
+
     @Transactional
     @Override
     public void followUser(Long followingId, Long followerId) {

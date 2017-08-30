@@ -29,6 +29,7 @@ public interface UserApi {
     @ApiResponses(value = {
             @ApiResponse(code = HttpServletResponse.SC_CREATED, message = "Following has been registered successfully"),
             @ApiResponse(code = HttpServletResponse.SC_NOT_FOUND, message = "Follower or following user not found"),
+            @ApiResponse(code = HttpServletResponse.SC_CONFLICT, message = "Following the user is already registered"),
             @ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "Bad request"),
             @ApiResponse(code = HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message = "Internal error")})
     ResponseEntity<Void> followUser(@ApiParam(value = "Follower") Long followerId,

@@ -55,12 +55,16 @@ public class UserController implements UserApi {
 
     @PostMapping(value = "/follow", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @Override
-    public ResponseEntity<Void> followUser(@PathVariable Long userId, @Valid @RequestBody UserId following) {
-        if(!userRepository.usersExists(userId, following.getUserId())){
+    public ResponseEntity<Void> followUser(@PathVariable(value = "userId") Long followerId, @Valid @RequestBody UserId following) {
+        if(!userRepository.usersExists(followerId, following.getUserId())){
             return ResponseEntity.notFound().build();
         }
 
-        userRepository.followUser(following.getUserId(), userId);
+        if(userRepository.userFollowExists(following.getUserId(), followerId)){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
+        userRepository.followUser(following.getUserId(), followerId);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

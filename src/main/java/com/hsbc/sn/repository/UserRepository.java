@@ -15,6 +15,8 @@ public interface UserRepository {
 
     Collection<Post> getUserPosts(Long userId);
 
+    boolean userFollowExists(Long followingId, Long followerId);
+
     void followUser(Long followingId, Long followerId);
 
     Collection<Post> timeline(Long userId);
