@@ -1,3 +1,5 @@
+# Social Network
+
 This is a social networking code challenge.
 
 ## Prerequisites
