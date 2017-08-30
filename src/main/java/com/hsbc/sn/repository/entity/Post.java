@@ -1,10 +1,10 @@
-package com.hsbc.sn.repository.model;
+package com.hsbc.sn.repository.entity;
 
 import lombok.Data;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Date;
 
 @Entity
 @Data
@@ -15,11 +15,19 @@ public class Post {
     @Column(nullable = false)
     private long id;
 
-    @NotNull
     @Column(nullable = false, length = 140)
     @Size(min = 1, max = 140)
     private String message;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    private User user;
+    @Column(nullable = false)
+    private Date createdAt;
+
+    @ManyToOne
+    @JoinColumn
+    private User owner;
+
+    @PrePersist
+    void createdAt() {
+        createdAt = new Date();
+    }
 }

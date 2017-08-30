@@ -1,12 +1,13 @@
 package com.hsbc.sn.controller;
 
-import com.hsbc.sn.controller.entity.Message;
-import com.hsbc.sn.controller.entity.PostId;
-import com.hsbc.sn.controller.entity.RawPost;
-import com.hsbc.sn.repository.PostRepository;
-import com.hsbc.sn.repository.model.Post;
-import com.hsbc.sn.repository.model.User;
-import com.hsbc.sn.repository.UserRepository;
+import com.hsbc.sn.controller.model.Message;
+import com.hsbc.sn.controller.model.PostId;
+import com.hsbc.sn.controller.model.RawPost;
+import com.hsbc.sn.repository.TestPostRepository;
+import com.hsbc.sn.repository.TestUserRepository;
+import com.hsbc.sn.repository.entity.Post;
+import com.hsbc.sn.repository.entity.User;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +27,10 @@ public class UserControllerITest {
     private static final String BASE_URL = "/api/users";
 
     @Autowired
-    private UserRepository userRepository;
+    private TestUserRepository userRepository;
 
     @Autowired
-    private PostRepository postRepository;
+    private TestPostRepository postRepository;
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -41,11 +42,13 @@ public class UserControllerITest {
         user.setId(1);
         Post post1 = new Post();
         post1.setMessage("Message 1");
+        post1.setOwner(user);
         Post post2 = new Post();
         post2.setMessage("Message 2");
-        user.getPosts().add(post1);
-        user.getPosts().add(post2);
+        post2.setOwner(user);
         userRepository.saveAndFlush(user);
+        postRepository.saveAndFlush(post1);
+        postRepository.saveAndFlush(post2);
 
         // WHEN
         HttpHeaders headers = new HttpHeaders();
@@ -57,8 +60,8 @@ public class UserControllerITest {
         // THEN
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(2, posts.length);
-        assertEquals(post1.getMessage(), posts[0].getMessage());
-        assertEquals(post2.getMessage(), posts[1].getMessage());
+        assertEquals(post2.getMessage(), posts[0].getMessage());
+        assertEquals(post1.getMessage(), posts[1].getMessage());
     }
 
     @Test
@@ -108,5 +111,4 @@ public class UserControllerITest {
         // THEN
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
-
 }

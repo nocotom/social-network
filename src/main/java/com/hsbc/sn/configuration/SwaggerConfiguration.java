@@ -20,15 +20,16 @@ public class SwaggerConfiguration {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
+                .useDefaultResponseMessages(false)
+                .apiInfo(apiInfo())
                 .select()
                 .apis(RequestHandlerSelectors.basePackage(BASE_API_PACKAGE))
-                .paths(PathSelectors.any())
                 .build();
     }
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder().title("Social Network API")
-                .description("Represents the social networking service where users post and interact with messages.")
+                .description("Represents the social networking service where users post messages and follow them.")
                 .build();
     }
 }

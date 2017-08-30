@@ -1,4 +1,4 @@
-package com.hsbc.sn.repository.model;
+package com.hsbc.sn.repository.entity;
 
 import lombok.Data;
 
@@ -14,9 +14,6 @@ public class User {
     @Column(nullable = false)
     private long id;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "owner")
     private Collection<Post> posts = new LinkedList<>();
-
-    @OneToMany(cascade = CascadeType.ALL)
-    private Collection<User> friends = new LinkedList<>();
 }
